@@ -1,0 +1,16 @@
+package demo.boot.controller;
+
+import java.util.List;
+
+import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.stereotype.Service;
+
+@Service
+public class KafkaService {
+
+	@KafkaListener(topics = "codeDecode_Topic", groupId = "codeDecode_group")
+	public void listenTopic(List<?> pgs) {
+		System.out.println("The pgs recieved are: " + pgs);
+	}
+
+}

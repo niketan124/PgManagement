@@ -1,0 +1,36 @@
+package demo.boot.controller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
+
+
+@RestController
+public class SimpleController {
+
+	@Autowired
+	RestTemplate restTemplate;
+
+	@GetMapping("/greet")
+	public String getGreet() {
+
+		String msg = restTemplate.getForObject("http://service1/greet", String.class);
+
+		return msg;
+	}
+//	@KafkaListener(topics = "codeDecode_Topic", groupId = "codeDecode_group")
+
+	@GetMapping
+	@CircuitBreaker(name = "service1", fallbackMethod = "defaultMsg")
+	public ResponseEntity<String> getAllPgs() {
+//		System.out.println("The receiced pgs: " + pgs);
+		String msg = restTemplate.getForObject("http://servicee1", String.class);
+		return ResponseEntity.ok(msg);
+	}
+
+	public String defaultMsg(Exception e) {
+		return "pg found.....do booking!";
+	}
+}

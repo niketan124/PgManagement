@@ -1,0 +1,75 @@
+package demo.boot.controller;
+
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+
+import demo.boot.dao.PgMgmtDao;
+import demo.boot.model.Pgmain;
+import jakarta.transaction.Transactional;
+
+@RestController
+public class SimpleController {
+
+	private final PgMgmtDao pgDao;
+
+	@Autowired
+	public SimpleController(PgMgmtDao pgDao) {
+		this.pgDao = pgDao;
+	}
+
+//	@Autowired
+//	Producer producer;
+//
+//	@Autowired
+//	Consumer consumer;
+
+	@GetMapping("/greet")
+	public String sayHello() {
+		return "Hello guys!";
+	}
+
+	@GetMapping
+	public ResponseEntity<List<Pgmain>> getAllTasks() {
+		List<Pgmain> pgs = (List<Pgmain>) pgDao.findAll();
+		System.out.println(pgs);
+
+		return ResponseEntity.ok(pgs);
+	}
+
+	@GetMapping("/{id}")
+	public ResponseEntity<Optional<Pgmain>> getPgById(@PathVariable long id) {
+		Optional<Pgmain> pgs = pgDao.findById(id);
+		System.out.println(pgs);
+
+		return ResponseEntity.ok(pgs);
+	}
+
+	@PostMapping
+	@Transactional
+	public ResponseEntity<Pgmain> createTask(@RequestBody Pgmain pg) {
+		Pgmain createdPg = pgDao.save(pg);
+//		producer.sendMsgToTopic(pg);
+		return ResponseEntity.status(HttpStatus.CREATED).body(createdPg);
+	}
+
+	@PutMapping("/id")
+	public ResponseEntity<Pgmain> updatePg(@RequestBody Pgmain pg, @PathVariable Long id) {
+		Optional<Pgmain> createdPg = pgDao.findById(id);
+
+		Pgmain existingPg = createdPg.get();
+		existingPg.setLocation(pg.getLocation());
+		Pgmain updatedPg = pgDao.save(existingPg);
+		return ResponseEntity.status(HttpStatus.CREATED).body(updatedPg);
+	}
+
+}

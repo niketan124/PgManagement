@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring accessors="true" comment="Delete 3 elements from workspace&#x0D;&#x0A;- Original elements:&#x0D;&#x0A;     PGManagmentClient/src/main/java/demo.boot.dao&#x0D;&#x0A;     PGManagmentClient/src/main/java/demo.boot.model&#x0D;&#x0A;     PGService/src/main/java" description="Delete elements" element1="=PGService/src\/main\/java=/optional=/true=/=/maven.pomderived=/true=/" element2="=PGManagmentClient/src\/main\/java=/optional=/true=/=/maven.pomderived=/true=/&lt;demo.boot.model" element3="=PGManagmentClient/src\/main\/java=/optional=/true=/=/maven.pomderived=/true=/&lt;demo.boot.dao" elements="3" flags="589830" id="org.eclipse.jdt.ui.delete" resources="0" stamp="1693082107633" subPackages="false" version="1.0"/>
+</session>

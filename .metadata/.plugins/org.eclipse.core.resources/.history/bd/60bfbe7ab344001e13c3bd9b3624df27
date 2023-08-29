@@ -1,0 +1,16 @@
+package demo.boot.controller;
+
+import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+public class NewController {
+
+	@GetMapping("/getpg")
+	@KafkaListener(topics = "codeDecode_Topic", groupId = "codeDecode_group")
+	public void listenTopic(String pgs) {
+		System.out.println("The pgs recieved are: " + pgs);
+	}
+
+}

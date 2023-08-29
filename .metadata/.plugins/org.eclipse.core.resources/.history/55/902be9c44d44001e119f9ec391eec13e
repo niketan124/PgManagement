@@ -1,0 +1,5 @@
+package demo.boot.dao;
+
+public interface PgMgmtDao {
+
+}

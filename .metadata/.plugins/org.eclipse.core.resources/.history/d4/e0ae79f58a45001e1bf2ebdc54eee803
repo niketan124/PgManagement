@@ -1,0 +1,5 @@
+package demo.boot.service;
+
+public class Consumer {
+
+}

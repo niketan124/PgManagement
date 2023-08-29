@@ -1,0 +1,74 @@
+package demo.boot.controller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
+
+import demo.boot.model.Pgmain;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import jakarta.validation.Valid;
+
+@RestController
+public class SimpleController {
+
+	@Autowired
+	RestTemplate restTemplate;
+
+	@GetMapping("/greet")
+	public String getGreet() {
+
+		String msg = restTemplate.getForObject("http://service1/greet", String.class);
+
+		return msg;
+	}
+//	@KafkaListener(topics = "codeDecode_Topic", groupId = "codeDecode_group")
+
+	@GetMapping
+	@CircuitBreaker(name = "service1", fallbackMethod = "defaultMsg")
+	public ResponseEntity<String> getAllPgs() {
+//		System.out.println("The receiced pgs: " + pgs);
+		String msg = restTemplate.getForObject("http://service1", String.class);
+		return ResponseEntity.ok(msg);
+	}
+
+	@PostMapping
+	@CircuitBreaker(name = "service1", fallbackMethod = "defaultMsg")
+	public ResponseEntity<Pgmain> createPg(@Valid @RequestBody Pgmain pg) {
+		Pgmain newPg = restTemplate.postForObject("http://service1", pg, Pgmain.class);
+		return ResponseEntity.ok(newPg);
+	}
+
+	@GetMapping("/{id}")
+	@CircuitBreaker(name = "service1", fallbackMethod = "defaultMsg")
+	public ResponseEntity<Pgmain> getPgById(long id) {
+		ResponseEntity<Pgmain> pg = restTemplate.getForEntity("http://service1/" + id, Pgmain.class);
+		return pg;
+	}
+
+	@PutMapping("/{id}")
+	@CircuitBreaker(name = "service1", fallbackMethod = "defaultMsg")
+	public ResponseEntity<Pgmain> updatePg(@Valid @RequestBody Pgmain pg, @PathVariable Long id) {
+		return restTemplate.exchange("http://service1/" + id, HttpMethod.PUT, new HttpEntity<>(pg), Pgmain.class);
+
+	}
+
+	@DeleteMapping("/{id}")
+	@CircuitBreaker(name = "service1", fallbackMethod = "defaultMsg")
+	public ResponseEntity<Pgmain> deletePgById(long id) {
+		restTemplate.delete("http://service1/" + id);
+		return ResponseEntity.ok().build();
+	}
+
+	public ResponseEntity<String> defaultMsg(Exception e) {
+		return ResponseEntity.ok("Pg found.... pls do booking");
+	}
+}
